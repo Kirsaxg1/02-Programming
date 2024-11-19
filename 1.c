@@ -1,69 +1,70 @@
-﻿//#define _CRT_SECURE_NO_WARNINGS
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
-//
-//char* VMP(int num, int base) 
-//{
-//	if (base < 2 || base > 32)
-//	{
-//		puts("Error");
-//		return NULL;
-//	}
-//	
-//	char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-//	char buffer[100];
-//	int index = 0;
-//
-//	if (num == 0 )
-//	{
-//		buffer[index++] = '0';
-//	} else 
-//	{
-//		while (num > 0)
-//		{
-//			int remainder = num % base;
-//			buffer[index++] = digits[remainder];
-//			num /= base;
-//		}
-//	}
-//
-//	buffer[index] = '\0';
-//
-//	int left = 0, right = index - 1;
-//
-//	while (left < right)
-//	{
-//		char temp = buffer[left];
-//		buffer[left] = buffer[right];
-//		buffer[right] = temp;
-//		left++;
-//		right--;
-//	}
-//
-//	char* result = (char*)malloc(index + 1);
-//	if (result == NULL)
-//	{
-//		puts("Error");
-//		return NULL;
-//	}
-//	strcpy(result, buffer);
-//	return result;
-//}
-//
-//int main()
-//{
-//	int num, base;
-//	puts("Enter an num");
-//	scanf("%d", &num);
-//	puts("Enter an base 2 - 32");
-//	scanf("%d", &base);
-//
-//	char* result = VMP(num, base);
-//	if (result != NULL)
-//	{
-//		printf("Result: %s\n", result);
-//		free(result);
-//	}
-//	return 0;
-//}
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* VMP(  unsigned int num, int r)
+{
+	if ( r < 1 || r > 5)
+	{
+		puts("Error. Pishi pravilno chislo!");
+		return NULL;
+	}
+
+	if (num == 0 )
+	{
+		char* res = (char*)malloc(2);
+		if (res == NULL) return NULL;
+		strcpy(res, "0");
+		return res;
+	}
+
+	unsigned int base = 1U << r;
+	int len = 0;
+	unsigned int temp = num;
+
+	while (temp > 0)
+	{
+		len++;
+		temp >>= r;
+	}
+
+	char* result = (char*)malloc(len + 1);
+	if (result == NULL) return NULL;
+	result[len] = '\0';
+
+	char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+	for (int i = len - 1; i >=0; i--)
+	{
+		unsigned int remainder = num & (base - 1);
+
+		result[i] = digits[remainder];
+		num >>= r;
+	}
+
+	return result;
+
+}
+int main()
+{
+	int unsigned num;
+	int r;
+
+	puts("Enter num");
+	scanf("%d", &num);
+
+	puts("Enter r (1-5)");
+	scanf("%d", &r);
+
+	char* result = VMP(num, r);
+	
+	if (result)
+	{
+		printf("Final: %s\n", result);
+		free(result);
+	}
+	else { puts("Error"); }
+
+	return 0;
+}
