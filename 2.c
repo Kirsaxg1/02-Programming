@@ -124,3 +124,9 @@ char* CONCATENATION_STR(int seed, char* strings[], int num_strings)
 
 	return result;
 }
+
+int main(int argc, char* argv[]) {
+	if (argc < 3) {
+		fprintf(stderr, "Usage: %s [-l|-r|-u|-n|-c] string [seed [strings...]]\n", argv[0]);
+		return NULL;
+	}
