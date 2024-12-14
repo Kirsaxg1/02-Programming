@@ -33,5 +33,8 @@
     <ClCompile Include="6.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="7.c">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
