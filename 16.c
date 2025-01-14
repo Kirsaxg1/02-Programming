@@ -2,17 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Функция сравнения элементов (для проверки уникальности)
 int int_comparer(int const* num1, int const* num2) {
     return *num1 == *num2 ? 0 : 1;
 }
 
-// Рекурсивная функция для генерации перестановок
 void generate_permutations(int* items, size_t items_count, size_t current_index,
     int** result_permutations, size_t* result_index, int* current_permutation, int (*equality_comparer)(int const*, int const*)) {
 
     if (current_index == items_count) {
-        // Копируем текущую перестановку в результирующий массив
         result_permutations[*result_index] = (int*)malloc(items_count * sizeof(int));
         if (result_permutations[*result_index] == NULL) {
             return;
@@ -42,17 +39,16 @@ void generate_permutations(int* items, size_t items_count, size_t current_index,
     }
 }
 
-
 int permutations(int* items, size_t items_count, int*** result_permutations,
     size_t* result_permutations_count, int (*equality_comparer)(int const*, int const*)) {
 
-    // 1. Проверка на NULL
+
     if (items == NULL) return 1;
     if (result_permutations == NULL) return 2;
     if (result_permutations_count == NULL) return 3;
     if (equality_comparer == NULL) return 4;
 
-    // 2. Проверка на уникальность
+
     for (size_t i = 0; i < items_count; ++i) {
         for (size_t j = i + 1; j < items_count; ++j) {
             if (equality_comparer(&items[i], &items[j]) == 0) {
@@ -61,19 +57,19 @@ int permutations(int* items, size_t items_count, int*** result_permutations,
         }
     }
 
-    // 3. Вычисление количества перестановок
+   
     size_t permutations_count = 1;
     for (size_t i = 1; i <= items_count; ++i) {
         permutations_count *= i;
     }
 
-    // 4. Выделение памяти под массив указателей на массивы перестановок
+    
     *result_permutations = (int**)malloc(permutations_count * sizeof(int*));
     if (*result_permutations == NULL) {
         return 5;
     }
 
-    // 5. Генерируем перестановки
+    
     int* current_permutation = (int*)malloc(items_count * sizeof(int));
     if (current_permutation == NULL) {
         free(*result_permutations);
@@ -107,7 +103,7 @@ int main() {
             }
             printf("}\n");
         }
-        // Освобождение памяти
+
         for (size_t i = 0; i < result_permutations_count; i++) {
             free(result_permutations[i]);
         }

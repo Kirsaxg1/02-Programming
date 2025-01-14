@@ -41,7 +41,6 @@ int subsets(int* items, size_t items_count, int*** result_subsets, size_t* resul
 
         (*result_subsets)[i] = (int*)malloc((subset_size + 1) * sizeof(int));
         if ((*result_subsets)[i] == NULL) {
-            // Освобождение памяти при ошибке
             for (size_t k = 0; k < i; k++) {
                 free((*result_subsets)[k]);
             }
@@ -76,7 +75,7 @@ int main() {
         printf("Found subsets: %zu\n", result_substes_count);
         for (size_t i = 0; i < result_substes_count; i++) {
             printf("{");
-            for (size_t j = 1; j <= result_substes[i][0]; j++) {  // Исправлено: j=0 -> j=1 и < -> <=
+            for (size_t j = 1; j <= result_substes[i][0]; j++) {  
                 printf("%d%s", result_substes[i][j], (j == result_substes[i][0]) ? "" : ", ");
             }
             printf("}\n");
