@@ -1,33 +1,39 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <stdarg.h>
-#include <stdlib.h>
-#include <math.h>
 
-double the_value_of_the_polynomial(double x, int n, ...) {
+double polynomial_value(double x, int degree, ...) {
+    va_list args;
+    va_start(args, degree);
 
-	va_list args;
-	va_start(args, n);
+    double result = 0.0;
 
-	double result = 0.0;
-	double ratio;
+    for (int i = degree; i >= 0; i--) {
+        double coefficient = va_arg(args, double);
+        result = result * x + coefficient;
+    }
 
-	for (int i = 0; i <= n; i++) {
-
-		ratio = va_arg(args, double);
-		result += ratio * pow(x, n - i);
-	}
-	va_end(args);
-	return result; 
+    va_end(args);
+    return result;
 }
 
 int main() {
+    //  2x^3 + 3x^2 + 4x + 5 в точке x = 2
+    double x = 2.0;
+    int degree = 3;
+    double value = polynomial_value(x, degree, 2.0, 3.0, 4.0, 5.0);
+    printf("The value of the polynomial 2x^3 + 3x^2 + 4x + 5 в точке x = %.2f: %.2f\n", x, value);
 
-	// 3x³ + 2x² - 5x + 1 in point x = 2
-	double x = 2.0;
-	int n = 3;
+    //  x^2 - 4x + 4 в точке x = 2
+    x = 2.0;
+    degree = 2;
+    value = polynomial_value(x, degree, 1.0, -4.0, 4.0);
+    printf("The value of the polynomial x^2 - 4x + 4 в точке x = %.2f: %.2f\n", x, value);
 
-	double result = the_value_of_the_polynomial(x, n, 3.0, 2.0, -5.0, 1.0);
-	printf("\n result = %.1f: %.1f\n", x, result);
-	return 0;
+    // 5x^4 + 0x^3 + 0x^2 + 0x + 1 в точке x = 1
+    x = 1.0;
+    degree = 4;
+    value = polynomial_value(x, degree, 5.0, 0.0, 0.0, 0.0, 1.0);
+    printf("The value of the polynomial 5x^4 + 0x^3 + 0x^2 + 0x + 1 в точке x = %.2f: %.2f\n", x, value);
+
+    return 0;
 }
