@@ -5,6 +5,52 @@
 #include <ctype.h>
 #include <math.h>
 
+// Удаляем старую функцию str_to_int
+// int str_to_int(const char* str, int base) {
+//     return (int)strto((str, NULL, base);
+// }
+
+// Новая функция str_to_int через схему Горнера
+int str_to_int(const char* str, int base) {
+    int result = 0;
+    int sign = 1;
+    int i = 0;
+
+    // Обработка знака
+    if (str[i] == '-') {
+        sign = -1;
+        i++;
+    }
+
+    // Преобразование строки в число
+    for (; str[i] != '\0'; i++) {
+        char c = str[i];
+        int digit;
+
+        if (isdigit(c)) {
+            digit = c - '0';
+        }
+        else if (isalpha(c)) {
+            digit = toupper(c) - 'A' + 10;
+        }
+        else {
+            // Недопустимый символ
+            return 0;
+        }
+
+        // Проверка на допустимость цифры в данной системе счисления
+        if (digit >= base) {
+            return 0;
+        }
+
+        // Схема Горнера
+        result = result * base + digit;
+    }
+
+    return result * sign;
+}
+
+// Остальной код остается без изменений
 void int_to_roman(int num, char* result) {
     int val[] = { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
     char* syms[] = { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
@@ -16,7 +62,6 @@ void int_to_roman(int num, char* result) {
         }
     }
 }
-
 
 void int_to_zeckendorf(unsigned int num, char* result) {
     if (num == 0) {
@@ -66,19 +111,13 @@ void int_to_base(int num, int base, char* result, int uppercase) {
         result[i++] = '-';
     }
     result[i] = '\0';
-   
+
     for (int j = 0; j < i / 2; j++) {
         char temp = result[j];
         result[j] = result[i - j - 1];
         result[i - j - 1] = temp;
     }
 }
-
-
-int str_to_int(const char* str, int base) {
-    return (int)strtol(str, NULL, base);
-}
-
 
 void print_memory_dump(const void* ptr, size_t size, char* result) {
     const unsigned char* bytes = (const unsigned char*)ptr;
@@ -405,18 +444,4 @@ int main() {
         overfprintf(file, "String to int: %to\n", "ff", 16);
         overfprintf(file, "String to int (uppercase): %TO\n", "FF", 16);
         overfprintf(file, "Memory dump (int): %mi\n", 123);
-        overfprintf(file, "Memory dump (unsigned int): %mu\n", 123);
-        overfprintf(file, "Memory dump (double): %md\n", 123.456);
-        overfprintf(file, "Memory dump (float): %mf\n", 123.456f);
-        fclose(file);
     }
-
-    char buffer[1000];
-    oversprintf(buffer, "Roman: %Ro\n", 2023);
-    oversprintf(buffer + strlen(buffer), "Zeckendorf: %Zr\n", 123);
-    oversprintf(buffer + strlen(buffer), "Base 16: %Cv\n", 255, 16);
-    oversprintf(buffer + strlen(buffer), "Base 16 (uppercase): %CV\n", 255, 16);
-    oversprintf(buffer + strlen(buffer), "String to int: %to\n", "ff", 16);
-    oversprintf(buffer + strlen(buffer), "String to int (uppercase): %TO\n", "FF", 16);
-    oversprintf(buffer + strlen(buffer), "Memory dump (int): %mi\n", 123);
-    oversprintf(buffer + strlen(buffer), "Memory dump
