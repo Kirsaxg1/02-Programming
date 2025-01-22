@@ -6,7 +6,6 @@
 #include <ctype.h>
 
 int substr(char* to_find, int case_sensitive, char*** results, int*** positions, size_t* results_count, ...) {
-
     int err;
     char* str_ptr, * find_ptr;
     int pos = -1;
@@ -42,27 +41,22 @@ int substr(char* to_find, int case_sensitive, char*** results, int*** positions,
 
     int current_ans_size = size;
 
-    for (int i = 0; i < current_ans_size; i++) {
+    int i, j;
+    for (i = 0; i < current_ans_size; i++) {
         (*positions)[i] = (int*)malloc(size * sizeof(int));
         if ((*positions)[i] == NULL) {
-            for (int j = 0; j < i; j++) {
+            for (j = 0; j < i; j++) {
                 free((*positions)[j]);
             }
-
             free(*positions);
             free(*results);
-
             va_end(ap);
-
             return 7;
         }
-
         (*positions)[i][0] = 0;
-
     }
 
     while ((str_ptr = va_arg(ap, char*)) != NULL) {
-
         temp_str_ptr = str_ptr;
         k = 0;
         pos = -1;
@@ -70,34 +64,28 @@ int substr(char* to_find, int case_sensitive, char*** results, int*** positions,
         current_position_str_size = size;
 
         if (current_ans_index >= current_ans_size) {
-
             size *= 2;
             temp_int_ptr_ptr = realloc(*positions, size * sizeof(int*));
-
             if (temp_int_ptr_ptr == NULL) {
-                for (int i = 0; i < current_ans_index; ++i) {
+                for (i = 0; i < current_ans_index; ++i) {
                     free((*results)[i]);
                 }
-
                 free(*results);
-                for (int j = 0; j < current_ans_size; j++) {
+                for (j = 0; j < current_ans_size; j++) {
                     free((*positions)[j]);
                 }
-
                 free(*positions);
                 va_end(ap);
                 return 8;
             }
-
             *positions = temp_int_ptr_ptr;
             temp_str_ptr = realloc(*results, size * sizeof(char*));
             if (temp_str_ptr == NULL) {
-
-                for (int i = 0; i < current_ans_index; ++i) {
+                for (i = 0; i < current_ans_index; ++i) {
                     free((*results)[i]);
                 }
                 free(*results);
-                for (int j = 0; j < current_ans_size; j++) {
+                for (j = 0; j < current_ans_size; j++) {
                     free((*positions)[j]);
                 }
                 free(*positions);
@@ -106,18 +94,15 @@ int substr(char* to_find, int case_sensitive, char*** results, int*** positions,
             }
             *results = temp_str_ptr;
 
-            for (int i = current_ans_size; i < size; i++) {
+            for (i = current_ans_size; i < size; i++) {
                 (*positions)[i] = (int*)malloc(current_position_str_size * sizeof(int));
-
                 if ((*positions)[i] == NULL) {
-                    for (int j = 0; j < i; j++) {
+                    for (j = 0; j < i; j++) {
                         free((*positions)[j]);
                     }
-
                     free(*positions);
-                    for (int j = 0; j < current_ans_size; ++j) {
+                    for (j = 0; j < current_ans_size; ++j) {
                         free((*results)[j]);
-
                     }
                     free(*results);
                     va_end(ap);
@@ -131,8 +116,7 @@ int substr(char* to_find, int case_sensitive, char*** results, int*** positions,
         find_ptr = to_find;
 
         while (*str_ptr != '\0') {
-            if (case_sensitive == 0 &&
-                tolower(*str_ptr) == tolower(*find_ptr)) {
+            if (case_sensitive == 0 && tolower(*str_ptr) == tolower(*find_ptr)) {
                 if (pos == -1) {
                     pos = k;
                 }
@@ -149,11 +133,11 @@ int substr(char* to_find, int case_sensitive, char*** results, int*** positions,
                     current_position_str_size *= 2;
                     temp_int_ptr_ptr = realloc((*positions)[current_ans_index], current_position_str_size * sizeof(int));
                     if (temp_int_ptr_ptr == NULL) {
-                        for (int i = 0; i < current_ans_index; ++i) {
+                        for (i = 0; i < current_ans_index; ++i) {
                             free((*results)[i]);
                         }
                         free(*results);
-                        for (int j = 0; j < current_ans_size; j++) {
+                        for (j = 0; j < current_ans_size; j++) {
                             free((*positions)[j]);
                         }
                         free(*positions);
@@ -179,11 +163,11 @@ int substr(char* to_find, int case_sensitive, char*** results, int*** positions,
             size_t len = strlen(temp_str_ptr) + 1;
             (*results)[current_ans_index] = malloc(len);
             if ((*results)[current_ans_index] == NULL) {
-                for (int i = 0; i < current_ans_index; ++i) {
+                for (i = 0; i < current_ans_index; ++i) {
                     free((*results)[i]);
                 }
                 free(*results);
-                for (int j = 0; j < current_ans_size; j++) {
+                for (j = 0; j < current_ans_size; j++) {
                     free((*positions)[j]);
                 }
                 free(*positions);
@@ -191,7 +175,6 @@ int substr(char* to_find, int case_sensitive, char*** results, int*** positions,
                 return 12;
             }
             strcpy((*results)[current_ans_index], temp_str_ptr);
-
             current_ans_index++;
             (*results_count)++;
         }
@@ -202,9 +185,8 @@ int substr(char* to_find, int case_sensitive, char*** results, int*** positions,
 }
 
 int main() {
-
     int err, i, j;
-    int** pos;
+    int** pos = NULL;
     size_t results_count = 0;
     char* inital = "el";
     char* str1 = "Helloworld";
@@ -215,22 +197,57 @@ int main() {
 
     if (err) {
         printf("Error code: %d\n", err);
+
+        if (results != NULL) {
+            for (i = 0; i < results_count; ++i) {
+                if (results[i] != NULL) {
+                    free(results[i]);
+                }
+            }
+            free(results);
+        }
+
+        if (pos != NULL) {
+            for (i = 0; i < results_count; ++i) {
+                if (pos[i] != NULL) {
+                    free(pos[i]);
+                }
+            }
+            free(pos);
+        }
+
         return err;
     }
 
     for (i = 0; i < results_count; i++) {
-        printf("String: %s\n", results[i]);
-        printf("Positions: ");
-        for (j = 1; j <= pos[i][0]; j++) {
-            printf("%d ", pos[i][j]);
+        if (results[i] != NULL) {
+            printf("String: %s\n", results[i]);
         }
-        printf("\n");
+        if (pos[i] != NULL) {
+            printf("Positions: ");
+            for (j = 1; j <= pos[i][0]; j++) {
+                printf("%d ", pos[i][j]);
+            }
+            printf("\n");
+        }
     }
-    for (int i = 0; i < results_count; ++i) {
-        free(results[i]);
-        free(pos[i]);
+
+    for (i = 0; i < results_count; ++i) {
+        if (results[i] != NULL) {
+            free(results[i]);
+        }
+        if (pos[i] != NULL) {
+            free(pos[i]);
+        }
     }
-    free(results);
-    free(pos);
+
+    if (results != NULL) {
+        free(results);
+    }
+
+    if (pos != NULL) {
+        free(pos);
+    }
+
     return EXIT_SUCCESS;
 }

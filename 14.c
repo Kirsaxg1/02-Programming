@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -44,13 +45,13 @@ int find_the_longest_sawtooth_subsequence(tvalue const* sequence, size_t sequenc
     size_t current_length = 1;
     size_t current_start = 0;
 
-    int direction = 0; 
+    int direction = 0;
 
-    for (size_t i = 1; i < sequence_length; i++) {
+    size_t i;
+    for (i = 1; i < sequence_length; i++) {
         int cmp = comparer(&sequence[i - 1], &sequence[i]);
 
         if (cmp == 0 && is_comparison_is_strict) {
-   
             if (current_length > max_length) {
                 max_length = current_length;
                 max_start = current_start;
@@ -101,7 +102,6 @@ int find_the_longest_sawtooth_subsequence(tvalue const* sequence, size_t sequenc
 }
 
 int main() {
-
     tvalue sequence[] = { 1, 2, 1, 3, 2, 4, 3, 5, 4, 6 };
     size_t sequence_length = sizeof(sequence) / sizeof(sequence[0]);
 
@@ -112,7 +112,8 @@ int main() {
 
     if (result == SUCCESS) {
         printf("Longest sawtooth subsequence starts at index %zu with length %zu:\n", start_index, length);
-        for (size_t i = start_index; i < start_index + length; i++) {
+        size_t i; 
+        for (i = start_index; i < start_index + length; i++) {
             printf("%d ", sequence[i]);
         }
         printf("\n");

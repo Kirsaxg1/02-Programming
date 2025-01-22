@@ -15,8 +15,9 @@ int subsets(int* items, size_t items_count, int*** result_subsets, size_t* resul
     if (result_subsets_count == NULL) return 3;
     if (equality_comparer == NULL) return 4;
 
-    for (size_t i = 0; i < items_count; ++i) {
-        for (size_t j = i + 1; j < items_count; ++j) {
+    size_t i, j;
+    for (i = 0; i < items_count; ++i) {
+        for (j = i + 1; j < items_count; ++j) {
             if (equality_comparer(&items[i], &items[j]) == 0) {
                 return 6;
             }
@@ -30,10 +31,11 @@ int subsets(int* items, size_t items_count, int*** result_subsets, size_t* resul
         return 5;
     }
 
-    for (size_t i = 0; i < subsets_count; i++) {
+    size_t k; 
+    for (i = 0; i < subsets_count; i++) {
         size_t subset_size = 0;
 
-        for (size_t j = 0; j < items_count; j++) {
+        for (j = 0; j < items_count; j++) {
             if ((i >> j) & 1) {
                 subset_size++;
             }
@@ -41,49 +43,59 @@ int subsets(int* items, size_t items_count, int*** result_subsets, size_t* resul
 
         (*result_subsets)[i] = (int*)malloc((subset_size + 1) * sizeof(int));
         if ((*result_subsets)[i] == NULL) {
-            for (size_t k = 0; k < i; k++) {
+            for (k = 0; k < i; k++) {
                 free((*result_subsets)[k]);
             }
             free(*result_subsets);
             return 5;
         }
+
         (*result_subsets)[i][0] = subset_size;
 
         size_t index = 1;
-
-        for (size_t j = 0; j < items_count; j++) {
+        for (j = 0; j < items_count; j++) {
             if ((i >> j) & 1) {
                 (*result_subsets)[i][index] = items[j];
                 index++;
             }
         }
     }
+
     *result_subsets_count = subsets_count;
     return 0;
 }
 
-
 int main() {
     int items[] = { 1, 2, 3 };
-    size_t items_count = 3;
-    int** result_substes = NULL;
-    size_t result_substes_count = 0;
+    size_t items_count = sizeof(items) / sizeof(items[0]);
+    int** result_subsets = NULL;
+    size_t result_subsets_count = 0;
 
-    int err = subsets(items, items_count, &result_substes, &result_substes_count, int_comparer);
+    int err = subsets(items, items_count, &result_subsets, &result_subsets_count, int_comparer);
 
     if (err == 0) {
-        printf("Found subsets: %zu\n", result_substes_count);
-        for (size_t i = 0; i < result_substes_count; i++) {
+        printf("Found subsets: %zu\n", result_subsets_count);
+        size_t i, j;
+        for (i = 0; i < result_subsets_count; i++) {
+            if (result_subsets[i] == NULL) {
+                printf("Error: memory allocation failed for subset %zu.\n", i);
+                continue;
+            }
             printf("{");
-            for (size_t j = 1; j <= result_substes[i][0]; j++) {  
-                printf("%d%s", result_substes[i][j], (j == result_substes[i][0]) ? "" : ", ");
+            for (j = 1; j <= result_subsets[i][0]; j++) {
+                printf("%d%s", result_subsets[i][j], (j == result_subsets[i][0]) ? "" : ", ");
             }
             printf("}\n");
         }
-        for (size_t i = 0; i < result_substes_count; i++) {
-            free(result_substes[i]);
+
+        for (i = 0; i < result_subsets_count; i++) {
+            if (result_subsets[i] != NULL) {
+                free(result_subsets[i]);
+            }
         }
-        free(result_substes);
+        if (result_subsets != NULL) {
+            free(result_subsets);
+        }
     }
     else {
         if (err == 1) printf("Error: items is NULL.\n");
@@ -93,5 +105,6 @@ int main() {
         else if (err == 5) printf("Error: memory allocation failed.\n");
         else if (err == 6) printf("Error: found not unique elements.\n");
     }
+
     return 0;
 }

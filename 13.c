@@ -8,13 +8,11 @@
 #define INVALID_VALUE 3
 #define MEMORY_ERROR 4
 
-
 int sums_decomposition(int value, int*** result_decompositions, size_t* result_decompositions_count, int allowed_equal_sum_components);
 void decompose(int current_value, int* current_decomposition, int current_decomposition_size, int allowed_equal,
     int*** result_decompositions, size_t* result_decompositions_count, int start);
 
 int sums_decomposition(int value, int*** result_decompositions, size_t* result_decompositions_count, int allowed_equal_sum_components) {
-  
     if (result_decompositions == NULL) return NULL_RESULT_DECOMPOSITIONS;
     if (result_decompositions_count == NULL) return NULL_RESULT_DECOMPOSITIONS_COUNT;
     if (value <= 0) return INVALID_VALUE;
@@ -31,20 +29,19 @@ int sums_decomposition(int value, int*** result_decompositions, size_t* result_d
     return SUCCESS;
 }
 
-
 void decompose(int current_value, int* current_decomposition, int current_decomposition_size, int allowed_equal,
     int*** result_decompositions, size_t* result_decompositions_count, int start) {
-
     if (current_value == 0) {
-
         int* result_decomposition = malloc(sizeof(int) * (current_decomposition_size + 1));
         if (result_decomposition == NULL) return;
 
         result_decomposition[0] = current_decomposition_size;
 
-        for (int i = 0; i < current_decomposition_size; i++) {
+        int i;
+        for (i = 0; i < current_decomposition_size; i++) {
             result_decomposition[i + 1] = current_decomposition[i];
         }
+
         if (*result_decompositions == NULL) {
             *result_decompositions = malloc(sizeof(int*));
             if (*result_decompositions == NULL) {
@@ -66,8 +63,8 @@ void decompose(int current_value, int* current_decomposition, int current_decomp
         return;
     }
 
-    for (int i = start; i <= current_value; i++) {
-   
+    int i;
+    for (i = start; i <= current_value; i++) {
         if (!allowed_equal && i == start && current_decomposition_size > 0 && current_decomposition[current_decomposition_size - 1] == i) {
             continue;
         }
@@ -75,7 +72,8 @@ void decompose(int current_value, int* current_decomposition, int current_decomp
         int* new_decomposition = malloc(sizeof(int) * (current_decomposition_size + 1));
         if (new_decomposition == NULL) return;
 
-        for (int j = 0; j < current_decomposition_size; j++) {
+        int j;
+        for (j = 0; j < current_decomposition_size; j++) {
             new_decomposition[j] = current_decomposition[j];
         }
 
@@ -85,29 +83,46 @@ void decompose(int current_value, int* current_decomposition, int current_decomp
         free(new_decomposition);
     }
 }
+
 int main() {
     int** decompositions = NULL;
     size_t decompositions_count = 0;
 
     int value = 5;
-    int allowed_equal = 1; 
+    int allowed_equal = 1;
 
     int result = sums_decomposition(value, &decompositions, &decompositions_count, allowed_equal);
 
     if (result == SUCCESS) {
         printf("Found %zu decompositions:\n", decompositions_count);
-        for (size_t i = 0; i < decompositions_count; i++) {
-            printf("Decomposition %zu: ", i + 1);
-            for (int j = 1; j <= decompositions[i][0]; j++) {
-                printf("%d ", decompositions[i][j]);
+        size_t i;
+        for (i = 0; i < decompositions_count; i++) {
+            if (decompositions[i] != NULL) {
+                printf("Decomposition %zu: ", i + 1);
+                int j;
+                for (j = 1; j <= decompositions[i][0]; j++) {
+                    printf("%d ", decompositions[i][j]);
+                }
+                printf("\n");
+                free(decompositions[i]);
             }
-            printf("\n");
-            free(decompositions[i]); 
         }
-        free(decompositions); 
+        if (decompositions != NULL) {
+            free(decompositions);
+        }
     }
     else {
         printf("Error: %d\n", result);
+
+        if (decompositions != NULL) {
+            size_t i;
+            for (i = 0; i < decompositions_count; i++) {
+                if (decompositions[i] != NULL) {
+                    free(decompositions[i]);
+                }
+            }
+            free(decompositions);
+        }
     }
 
     return 0;

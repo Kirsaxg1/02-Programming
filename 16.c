@@ -14,19 +14,20 @@ void generate_permutations(int* items, size_t items_count, size_t current_index,
         if (result_permutations[*result_index] == NULL) {
             return;
         }
-        for (size_t i = 0; i < items_count; ++i) {
+        size_t i;
+        for (i = 0; i < items_count; ++i) {
             result_permutations[*result_index][i] = current_permutation[i];
         }
         (*result_index)++;
         return;
     }
 
-    for (size_t i = 0; i < items_count; ++i) {
+    size_t i;
+    for (i = 0; i < items_count; ++i) {
         int is_used = 0;
-        for (size_t j = 0; j < current_index; ++j)
-        {
-            if (equality_comparer(&items[i], &current_permutation[j]) == 0)
-            {
+        size_t j;
+        for (j = 0; j < current_index; ++j) {
+            if (equality_comparer(&items[i], &current_permutation[j]) == 0) {
                 is_used = 1;
                 break;
             }
@@ -42,34 +43,30 @@ void generate_permutations(int* items, size_t items_count, size_t current_index,
 int permutations(int* items, size_t items_count, int*** result_permutations,
     size_t* result_permutations_count, int (*equality_comparer)(int const*, int const*)) {
 
-
     if (items == NULL) return 1;
     if (result_permutations == NULL) return 2;
     if (result_permutations_count == NULL) return 3;
     if (equality_comparer == NULL) return 4;
 
-
-    for (size_t i = 0; i < items_count; ++i) {
-        for (size_t j = i + 1; j < items_count; ++j) {
+    size_t i, j;
+    for (i = 0; i < items_count; ++i) {
+        for (j = i + 1; j < items_count; ++j) {
             if (equality_comparer(&items[i], &items[j]) == 0) {
                 return 6;
             }
         }
     }
 
-   
     size_t permutations_count = 1;
-    for (size_t i = 1; i <= items_count; ++i) {
+    for (i = 1; i <= items_count; ++i) {
         permutations_count *= i;
     }
 
-    
     *result_permutations = (int**)malloc(permutations_count * sizeof(int*));
     if (*result_permutations == NULL) {
         return 5;
     }
 
-    
     int* current_permutation = (int*)malloc(items_count * sizeof(int));
     if (current_permutation == NULL) {
         free(*result_permutations);
@@ -88,7 +85,7 @@ int permutations(int* items, size_t items_count, int*** result_permutations,
 
 int main() {
     int items[] = { 1, 2, 3 };
-    size_t items_count = 3;
+    size_t items_count = sizeof(items) / sizeof(items[0]);
     int** result_permutations = NULL;
     size_t result_permutations_count = 0;
 
@@ -96,20 +93,30 @@ int main() {
 
     if (err == 0) {
         printf("Found permutations: %zu\n", result_permutations_count);
-        for (size_t i = 0; i < result_permutations_count; i++) {
+        size_t i, j;
+        for (i = 0; i < result_permutations_count; i++) {
+            if (result_permutations[i] == NULL) {
+                printf("Error: memory allocation failed for permutation %zu.\n", i);
+                continue;
+            }
             printf("{");
-            for (size_t j = 0; j < items_count; j++) {
+            for (j = 0; j < items_count; j++) {
                 printf("%d%s", result_permutations[i][j], (j == items_count - 1) ? "" : ", ");
             }
             printf("}\n");
         }
 
-        for (size_t i = 0; i < result_permutations_count; i++) {
-            free(result_permutations[i]);
+        for (i = 0; i < result_permutations_count; i++) {
+            if (result_permutations[i] != NULL) {
+                free(result_permutations[i]);
+            }
         }
-        free(result_permutations);
+        if (result_permutations != NULL) {
+            free(result_permutations);
+        }
     }
     else {
+
         if (err == 1) printf("Error: items is NULL.\n");
         else if (err == 2) printf("Error: result_permutations is NULL.\n");
         else if (err == 3) printf("Error: result_permutations_count is NULL.\n");
@@ -117,5 +124,6 @@ int main() {
         else if (err == 5) printf("Error: memory allocation failed.\n");
         else if (err == 6) printf("Error: found not unique elements.\n");
     }
+
     return 0;
 }
