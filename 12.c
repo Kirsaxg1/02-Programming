@@ -26,13 +26,13 @@ int substr(char* to_find, int case_sensitive, char*** results, int*** positions,
     va_start(ap, results_count);
 
     *results_count = 0;
-    *results = malloc(sizeof(char*) * size);
+    *results = (char**)malloc(sizeof(char*) * size);
     if (*results == NULL) {
         va_end(ap);
         return 5;
     }
 
-    *positions = malloc(sizeof(int*) * size);
+    *positions = (int**)malloc(sizeof(int*) * size);
     if (*positions == NULL) {
         free(*results);
         va_end(ap);
@@ -65,7 +65,7 @@ int substr(char* to_find, int case_sensitive, char*** results, int*** positions,
 
         if (current_ans_index >= current_ans_size) {
             size *= 2;
-            temp_int_ptr_ptr = realloc(*positions, size * sizeof(int*));
+            temp_int_ptr_ptr = (int**)realloc(*positions, size * sizeof(int*));
             if (temp_int_ptr_ptr == NULL) {
                 for (i = 0; i < current_ans_index; ++i) {
                     free((*results)[i]);
@@ -79,7 +79,7 @@ int substr(char* to_find, int case_sensitive, char*** results, int*** positions,
                 return 8;
             }
             *positions = temp_int_ptr_ptr;
-            temp_str_ptr = realloc(*results, size * sizeof(char*));
+            temp_str_ptr = (char**)realloc(*results, size * sizeof(char*));
             if (temp_str_ptr == NULL) {
                 for (i = 0; i < current_ans_index; ++i) {
                     free((*results)[i]);
@@ -131,7 +131,7 @@ int substr(char* to_find, int case_sensitive, char*** results, int*** positions,
             else if (*find_ptr == '\0' && pos != -1) {
                 if (current_position_str_index >= current_position_str_size) {
                     current_position_str_size *= 2;
-                    temp_int_ptr_ptr = realloc((*positions)[current_ans_index], current_position_str_size * sizeof(int));
+                    temp_int_ptr_ptr = (int*)realloc((*positions)[current_ans_index], current_position_str_size * sizeof(int));
                     if (temp_int_ptr_ptr == NULL) {
                         for (i = 0; i < current_ans_index; ++i) {
                             free((*results)[i]);

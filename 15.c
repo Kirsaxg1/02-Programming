@@ -187,8 +187,8 @@ int find_saddle_points(tvalue const* const* matrix, size_t matrix_rows_count, si
         return SUCCESS;
     }
 
-    size_t* min_in_rows = malloc(matrix_rows_count * sizeof(size_t));
-    size_t* max_in_columns = malloc(matrix_columns_count * sizeof(size_t));
+    size_t* min_in_rows = (size_t*)malloc(matrix_rows_count * sizeof(size_t));
+    size_t* max_in_columns = (size_t*)malloc(matrix_columns_count * sizeof(size_t));
 
     if (min_in_rows == NULL || max_in_columns == NULL) {
         free(min_in_rows);
@@ -231,7 +231,7 @@ int find_saddle_points(tvalue const* const* matrix, size_t matrix_rows_count, si
     }
 
     for (i = 0; i < saddle_points_count; i++) {
-        (*found_saddle_points_storage)[i] = malloc(2 * sizeof(size_t));
+        (*found_saddle_points_storage)[i] = (size_t*)malloc(2 * sizeof(size_t));
         if ((*found_saddle_points_storage)[i] == NULL) {
             for (k = 0; k < i; k++) {
                 free((*found_saddle_points_storage)[k]);

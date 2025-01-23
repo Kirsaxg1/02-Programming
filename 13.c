@@ -32,7 +32,7 @@ int sums_decomposition(int value, int*** result_decompositions, size_t* result_d
 void decompose(int current_value, int* current_decomposition, int current_decomposition_size, int allowed_equal,
     int*** result_decompositions, size_t* result_decompositions_count, int start) {
     if (current_value == 0) {
-        int* result_decomposition = malloc(sizeof(int) * (current_decomposition_size + 1));
+        int* result_decomposition = (int*)malloc(sizeof(int) * (current_decomposition_size + 1));
         if (result_decomposition == NULL) return;
 
         result_decomposition[0] = current_decomposition_size;
@@ -43,14 +43,14 @@ void decompose(int current_value, int* current_decomposition, int current_decomp
         }
 
         if (*result_decompositions == NULL) {
-            *result_decompositions = malloc(sizeof(int*));
+            *result_decompositions = (int**)malloc(sizeof(int*));
             if (*result_decompositions == NULL) {
                 free(result_decomposition);
                 return;
             }
         }
         else {
-            int** temp_result_decompositions = realloc(*result_decompositions, sizeof(int*) * (*result_decompositions_count + 1));
+            int** temp_result_decompositions = (int**)realloc(*result_decompositions, sizeof(int*) * (*result_decompositions_count + 1));
             if (temp_result_decompositions == NULL) {
                 free(result_decomposition);
                 return;
@@ -69,7 +69,7 @@ void decompose(int current_value, int* current_decomposition, int current_decomp
             continue;
         }
 
-        int* new_decomposition = malloc(sizeof(int) * (current_decomposition_size + 1));
+        int* new_decomposition = (int*)malloc(sizeof(int) * (current_decomposition_size + 1));
         if (new_decomposition == NULL) return;
 
         int j;
